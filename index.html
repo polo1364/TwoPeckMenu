@@ -93,6 +93,11 @@
     font-weight: bold;
   }
 
+  #summary td {
+  max-width: 200px;
+  overflow-wrap: break-word;
+}
+
   #footer {
     margin-top: 40px;
     text-align: center;
@@ -245,7 +250,13 @@
         }
         const subtotal = unitPrice * qty;
         total += subtotal;
-        summaryHTML += `<tr><td>${item}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
+        summaryHTML += `<tr>
+  <td>${item.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
+  <td>${unitPrice}</td>
+  <td>${qty}</td>
+  <td>${subtotal}</td>
+  <td>${note.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
+</tr>`;
       });
       summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
       document.getElementById('summary').innerHTML = summaryHTML;
