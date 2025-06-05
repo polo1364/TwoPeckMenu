@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>派克炸雞菜單</title>
+  <title>雙饗炸雞點餐統計</title>
   <style>
     body {
       font-family: "Microsoft JhengHei", sans-serif;
@@ -33,78 +33,96 @@
     .note {
       font-size: 14px;
       color: #555;
-      margin-top: -20px;
       margin-bottom: 30px;
       text-align: center;
+    }
+    input[type="number"] {
+      width: 60px;
+    }
+    #result {
+      font-size: 18px;
+      font-weight: bold;
+      margin-top: 20px;
+      text-align: center;
+    }
+    button {
+      display: block;
+      margin: 0 auto 30px;
+      padding: 10px 20px;
+      font-size: 16px;
     }
   </style>
 </head>
 <body>
-  <h1>派克炸雞菜單</h1>
+  <h1>雙饗炸雞點餐統計</h1>
 
-  <h2>套餐系列 Combo</h2>
-  <table>
-    <tr><th>編號</th><th>套餐名稱</th><th>內容</th><th>價格</th></tr>
-    <tr><td>1</td><td>全家快樂分享餐</td><td>雞腿x2、雞翅x4、雞塊x6、薯條x2、炸湯圓、1.25L飲料</td><td>$489</td></tr>
-    <tr><td>2</td><td>雞腿分享餐</td><td>雞腿x2、雞塊x6、1.25L飲料</td><td>$279</td></tr>
-    <tr><td>3</td><td>三腿自選餐</td><td>雞腿x3、雞塊x10、地瓜球小、紅茶小杯</td><td>$125</td></tr>
-    <tr><td>4</td><td>雞腿單人套餐</td><td>雞腿、雞塊、地瓜球、紅茶小杯</td><td>$139</td></tr>
-    <tr><td>5</td><td>雞翅分享餐</td><td>雞翅x6、薯條、紅茶</td><td>$189</td></tr>
-    <tr><td>6</td><td>雞排單人套餐</td><td>雞排、炸湯圓、紅茶小杯</td><td>$125</td></tr>
-    <tr><td>7</td><td>雞排+珍奶套餐</td><td>脆皮雞排 + Just One Eat 珍奶</td><td>$115</td></tr>
-  </table>
+  <form id="orderForm">
+    <h2>炸雞系列</h2>
+    <table>
+      <tr><th>品項</th><th>單價</th><th>數量</th></tr>
+      <tr><td>脆皮雞排</td><td>85</td><td><input type="number" name="脆皮雞排" min="0" value="0"></td></tr>
+      <tr><td>脆皮雞腿排</td><td>85</td><td><input type="number" name="脆皮雞腿排" min="0" value="0"></td></tr>
+      <tr><td>脆皮雞塊</td><td>70</td><td><input type="number" name="脆皮雞塊" min="0" value="0"></td></tr>
+      <tr><td>脆皮雞翅</td><td>35</td><td><input type="number" name="脆皮雞翅" min="0" value="0"></td></tr>
+      <tr><td>脆皮雞腿</td><td>50</td><td><input type="number" name="脆皮雞腿" min="0" value="0"></td></tr>
+      <tr><td>脆皮雞柳</td><td>75</td><td><input type="number" name="脆皮雞柳" min="0" value="0"></td></tr>
+    </table>
 
-  <h2>炸雞系列 Chicken</h2>
-  <table>
-    <tr><th>品項</th><th>價格</th></tr>
-    <tr><td>脆皮雞排</td><td>$85</td></tr>
-    <tr><td>脆皮雞腿排</td><td>$85</td></tr>
-    <tr><td>脆皮雞塊</td><td>$70</td></tr>
-    <tr><td>脆皮雞柳</td><td>$75</td></tr>
-    <tr><td>脆皮雞翅</td><td>$35</td></tr>
-    <tr><td>脆皮雞腿</td><td>$50</td></tr>
-    <tr><td>泰酥星星魚（鯛魚）</td><td>$60</td></tr>
-    <tr><td>爆蛋柳葉魚</td><td>$60</td></tr>
-    <tr><td>酥炸三角骨肉</td><td>$65</td></tr>
-    <tr><td>脆皮魷魚</td><td>$75</td></tr>
-    <tr><td>脆皮雞軟骨</td><td>$70</td></tr>
-  </table>
+    <h2>飲料系列</h2>
+    <table>
+      <tr><th>飲品</th><th>單價</th><th>數量</th></tr>
+      <tr><td>紅茶</td><td>25</td><td><input type="number" name="紅茶" min="0" value="0"></td></tr>
+      <tr><td>綠茶</td><td>20</td><td><input type="number" name="綠茶" min="0" value="0"></td></tr>
+      <tr><td>阿薩姆奶茶</td><td>25</td><td><input type="number" name="阿薩姆奶茶" min="0" value="0"></td></tr>
+      <tr><td>Just One Eat 珍奶</td><td>45</td><td><input type="number" name="Just One Eat 珍奶" min="0" value="0"></td></tr>
+    </table>
 
-  <h2>飲料系列 Drinks</h2>
-  <table>
-    <tr><th>飲品名稱</th><th>搭配價</th><th>原價</th></tr>
-    <tr><td>綠茶 / 烏龍綠茶 / 青茶</td><td>$20</td><td>$30</td></tr>
-    <tr><td>紅茶 / 阿薩姆奶茶 / 鮮奶茶</td><td>$25</td><td>$35</td></tr>
-    <tr><td>百香綠 / 檸檬綠</td><td>$35</td><td>$45</td></tr>
-    <tr><td>古早味紅茶 / 芒果綠</td><td>$35</td><td>$45</td></tr>
-    <tr><td>Just One Eat 珍奶系列</td><td>$45～$60</td><td>依標示</td></tr>
-    <tr><td>瓶裝可樂 / 雪碧 / 沙士等</td><td colspan="2">$25</td></tr>
-  </table>
+    <h2>點心系列</h2>
+    <table>
+      <tr><th>點心</th><th>單價</th><th>數量</th></tr>
+      <tr><td>QQ地瓜球</td><td>35</td><td><input type="number" name="QQ地瓜球" min="0" value="0"></td></tr>
+      <tr><td>洋蔥圈</td><td>35</td><td><input type="number" name="洋蔥圈" min="0" value="0"></td></tr>
+      <tr><td>梅子地瓜條</td><td>35</td><td><input type="number" name="梅子地瓜條" min="0" value="0"></td></tr>
+      <tr><td>脆皮甜不辣</td><td>35</td><td><input type="number" name="脆皮甜不辣" min="0" value="0"></td></tr>
+    </table>
 
-  <h2>點心系列 Snack</h2>
-  <table>
-    <tr><th>品項</th><th>價格</th></tr>
-    <tr><td>馬力歐起司條</td><td>$50</td></tr>
-    <tr><td>QQ地瓜球</td><td>$35</td></tr>
-    <tr><td>洋蔥圈</td><td>$35</td></tr>
-    <tr><td>香酥四季豆</td><td>$35</td></tr>
-    <tr><td>玉米布丁酥</td><td>$35</td></tr>
-    <tr><td>梅子地瓜條</td><td>$35</td></tr>
-    <tr><td>脆皮甜不辣</td><td>$35</td></tr>
-    <tr><td>脆皮香菇</td><td>$35</td></tr>
-    <tr><td>脆皮雞皮</td><td>$35</td></tr>
-    <tr><td>脆皮上里肌</td><td>$35</td></tr>
-    <tr><td>脆皮雞心</td><td>$30</td></tr>
-    <tr><td>脆皮花枝丸</td><td>$30</td></tr>
-    <tr><td>脆皮米血</td><td>$25</td></tr>
-    <tr><td>脆皮黑輪片</td><td>$25</td></tr>
-    <tr><td>脆皮豆干</td><td>$25</td></tr>
-    <tr><td>脆皮米血糕</td><td>$25</td></tr>
-    <tr><td>雞蘿蔔糕</td><td>$25</td></tr>
-  </table>
+    <button type="button" onclick="calculateTotal()">計算總金額</button>
+  </form>
+
+  <div id="result"></div>
 
   <div class="note">
-    調味選擇：胡椒、咖哩、海苔、蒜味、梅子、芥末、起士、都不加 ｜ 辣度：微辣、小辣、中辣、大辣
+    調味：胡椒、咖哩、海苔、蒜味、梅子、芥末、起士、都不加 ｜ 辣度：微辣、小辣、中辣、大辣
   </div>
+
+  <script>
+    function calculateTotal() {
+      const prices = {
+        "脆皮雞排": 85,
+        "脆皮雞腿排": 85,
+        "脆皮雞塊": 70,
+        "脆皮雞翅": 35,
+        "脆皮雞腿": 50,
+        "脆皮雞柳": 75,
+        "紅茶": 25,
+        "綠茶": 20,
+        "阿薩姆奶茶": 25,
+        "Just One Eat 珍奶": 45,
+        "QQ地瓜球": 35,
+        "洋蔥圈": 35,
+        "梅子地瓜條": 35,
+        "脆皮甜不辣": 35
+      };
+
+      let total = 0;
+      const form = document.forms['orderForm'];
+      Object.keys(prices).forEach(item => {
+        const qty = parseInt(form[item].value) || 0;
+        total += qty * prices[item];
+      });
+
+      document.getElementById("result").textContent = `總金額：$${total} 元`;
+    }
+  </script>
 </body>
 </html>
