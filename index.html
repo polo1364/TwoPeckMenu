@@ -64,7 +64,6 @@
   #summary table {
     width: 100%;
     border-collapse: collapse;
-    table-layout: fixed; /* ✨ 固定欄寬，防止跑版 */
     margin-top: 20px;
   }
 
@@ -210,49 +209,66 @@
     }
 
     function generateSummary() {
-      let total = 0;
-      let hasChicken = false;
-      const rows = document.querySelectorAll('#orderTable tr');
-      let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
+  let total = 0;
+  let hasChicken = false;
+  const rows = document.querySelectorAll('#orderTable tr');
+  let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
 
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const type = cells[0].querySelector('select').value;
-        const item = cells[1].querySelector('select').value;
-        let unitPrice = parseInt(cells[2].textContent);
-        const qty = parseInt(cells[3].querySelector('input').value);
-        const note = cells[4].querySelector('input').value;
-        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
-        if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) hasChicken = true;
-      });
+  // 檢查是否有雞排類
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const type = cells[0].querySelector('select').value;
+    const item = cells[1].querySelector('select').value;
+    const unitPrice = parseInt(cells[2].textContent);
+    if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) hasChicken = true;
+  });
 
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const type = cells[0].querySelector('select').value;
-        const item = cells[1].querySelector('select').value;
-        let unitPrice = parseInt(cells[2].textContent);
-        const qty = parseInt(cells[3].querySelector('input').value);
-        const note = cells[4].querySelector('input').value;
-        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
-        if (hasChicken && type === '飲料') {
-          const discountMap = {
-            '錫蘭紅茶冰': 20, '古早味紅茶冰': 20, '綠茶': 20, '仙草甘茶': 25,
-            '派克奶茶': 35, '派克鮮奶茶': 40, '古早味鮮奶茶': 45, '多多綠': 35,
-            '烈火黑糖珍珠奶茶': 45, '烈火黑糖珍珠鮮奶茶': 50, '烈火黑糖珍珠撞奶': 55,
-            '布丁奶茶': 45, '布丁鮮奶茶': 50,
-            '可口可樂': 25, '雪碧': 25, '可口可樂/杯': 30, '雪碧/杯': 30
-          };
-          if (discountMap[item]) unitPrice = discountMap[item];
-        }
-        const subtotal = unitPrice * qty;
-        total += subtotal;
-        summaryHTML += `<tr><td>${item}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
-      });
+  // 第二次統計
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const type = cells[0].querySelector('select').value;
+    const item = cells[1].querySelector('select').value;
+    let unitPrice = parseInt(cells[2].textContent);
+    const qty = parseInt(cells[3].querySelector('input').value);
+    const note = cells[4].querySelector('input').value;
+    if (!item || isNaN(unitPrice) || isNaN(qty)) return;
 
-      summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
-      document.getElementById('summary').innerHTML = summaryHTML;
+    // 折扣邏輯
+    if (hasChicken && type === '飲料') {
+      const discountMap = {
+        '錫蘭紅茶冰': 20, '古早味紅茶冰': 20, '綠茶': 20, '仙草甘茶': 25,
+        '派克奶茶': 35, '派克鮮奶茶': 40, '古早味鮮奶茶': 45, '多多綠': 35,
+        '烈火黑糖珍珠奶茶': 45, '烈火黑糖珍珠鮮奶茶': 50, '烈火黑糖珍珠撞奶': 55,
+        '布丁奶茶': 45, '布丁鮮奶茶': 50,
+        '可口可樂': 25, '雪碧': 25, '可口可樂/杯': 30, '雪碧/杯': 30
+      };
+      if (discountMap[item]) unitPrice = discountMap[item];
     }
 
+    const subtotal = unitPrice * qty;
+    total += subtotal;
+    summaryHTML += `<tr><td>${item}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
+  });
+
+  summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
+  document.getElementById('summary').innerHTML = summaryHTML;
+  autoScaleFont(); // 自動縮字
+}
+
+    function autoScaleFont() {
+  const cells = document.querySelectorAll('#summary td');
+  cells.forEach(td => {
+    const len = td.textContent.trim().length;
+    if (len > 30) {
+      td.style.fontSize = '12px';
+    } else if (len > 20) {
+      td.style.fontSize = '14px';
+    } else {
+      td.style.fontSize = '16px';
+    }
+  });
+}
+  
     function clearAll() {
       document.getElementById('orderTable').innerHTML = '';
       document.getElementById('summary').innerHTML = '';
