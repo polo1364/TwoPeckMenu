@@ -189,33 +189,58 @@
     };
 
     function addRow() {
-      const row = document.createElement('tr');
-      const typeSel = document.createElement('select');
-      typeSel.innerHTML = `<option disabled selected>請選分類</option>` + Object.keys(menu).map(c => `<option value="${c}">${c}</option>`).join('');
-      const itemSel = document.createElement('select');
-      itemSel.innerHTML = `<option disabled selected>請先選分類</option>`;
-      const priceCell = document.createElement('td');
-      priceCell.textContent = "-";
-      const qtyInput = document.createElement('input');
-      qtyInput.type = 'number'; qtyInput.min = 1; qtyInput.value = 1;
-      const noteInput = document.createElement('input');
-      noteInput.type = 'text'; noteInput.placeholder = '備註';
+  const row = document.createElement('tr');
 
-      typeSel.onchange = () => {
-        itemSel.innerHTML = `<option disabled selected>請選擇品項</option>` +
-          Object.keys(menu[typeSel.value]).map(i => `<option value="${i}">${i}</option>`).join('');
-      };
-      itemSel.onchange = () => {
-        priceCell.textContent = menu[typeSel.value][itemSel.value];
-      };
+  const typeSel = document.createElement('select');
+  typeSel.innerHTML = `<option disabled selected>請選分類</option>` +
+    Object.keys(menu).map(c => `<option value="${c}">${c}</option>`).join('');
 
-      row.appendChild(document.createElement('td')).appendChild(typeSel);
-      row.appendChild(document.createElement('td')).appendChild(itemSel);
-      row.appendChild(priceCell);
-      row.appendChild(document.createElement('td')).appendChild(qtyInput);
-      row.appendChild(document.createElement('td')).appendChild(noteInput);
-      document.getElementById('orderTable').appendChild(row);
-    }
+  const itemSel = document.createElement('select');
+  itemSel.innerHTML = `<option disabled selected>請先選分類</option>`;
+
+  const priceCell = document.createElement('td');
+  priceCell.textContent = "-";
+
+  const qtyInput = document.createElement('input');
+  qtyInput.type = 'number';
+  qtyInput.min = 1;
+  qtyInput.value = 1;
+
+  const noteInput = document.createElement('input');
+  noteInput.type = 'text';
+  noteInput.placeholder = '備註';
+
+  typeSel.onchange = () => {
+    itemSel.innerHTML = `<option disabled selected>請選擇品項</option>` +
+      Object.keys(menu[typeSel.value]).map(i => `<option value="${i}">${i}</option>`).join('');
+  };
+
+  itemSel.onchange = () => {
+    priceCell.textContent = menu[typeSel.value][itemSel.value];
+  };
+
+  // 正確包裝每個欄位
+  const tdType = document.createElement('td');
+  tdType.appendChild(typeSel);
+  row.appendChild(tdType);
+
+  const tdItem = document.createElement('td');
+  tdItem.appendChild(itemSel);
+  row.appendChild(tdItem);
+
+  row.appendChild(priceCell); // 價格欄不需 input，直接使用
+
+  const tdQty = document.createElement('td');
+  tdQty.appendChild(qtyInput);
+  row.appendChild(tdQty);
+
+  const tdNote = document.createElement('td');
+  tdNote.appendChild(noteInput);
+  row.appendChild(tdNote);
+
+  document.getElementById('orderTable').appendChild(row);
+}
+
 
     function generateSummary() {
   let total = 0;
