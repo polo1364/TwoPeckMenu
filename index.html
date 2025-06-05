@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>雙饗炸雞點餐系統</title>
   <style>
     body {
@@ -24,15 +24,23 @@
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 6px;
+      padding: 8px;
       text-align: center;
     }
     select, input[type="number"], input[type="text"] {
       width: 100%;
+      padding: 4px;
+      box-sizing: border-box;
     }
     .buttons {
       text-align: center;
       margin: 20px 0;
+    }
+    button {
+      margin: 0 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
     }
     #summary {
       margin-top: 20px;
@@ -40,9 +48,7 @@
     @media print {
       .no-print { display: none; }
       body::after {
-        content: "大瑞科技
-地址:高雄市大寮區鳳林二路532號
-電話:(07)7871875";
+        content: "大瑞科技\n地址:高雄市大寮區鳳林二路532號\n電話:(07)7871875";
         white-space: pre-line;
         display: block;
         text-align: center;
@@ -63,10 +69,10 @@
     </table>
 
     <div class="buttons">
-      <button onclick="addRow()">新增品項</button>
-      <button onclick="generateSummary()">統計總金額</button>
-      <button onclick="print()">列印</button>
-      <button onclick="clearAll()">清除</button>
+      <button onclick="addRow()">➕ 新增品項</button>
+      <button onclick="generateSummary()">📊 統計總金額</button>
+      <button onclick="print()">🖨️ 列印</button>
+      <button onclick="clearAll()">🗑️ 清除</button>
     </div>
   </div>
 
@@ -75,13 +81,13 @@
   <script>
     const menu = {
       "套餐": {
-        "脆皮雞腿全家快樂分享餐": 489,
-        "脆皮雞腿分享餐": 279,
-        "脆皮雞三腿自選餐": 125,
-        "脆皮雞腿單人套餐": 139,
-        "脆皮雞翅分享餐": 189,
-        "脆皮雞排單人套餐": 125,
-        "雞排＋珍奶套餐": 115
+        "脆皮雞腿全家快樂分享餐(脆皮雞腿×7+脆皮雞翅×2+馬鈴薯x1+地瓜條x1+甜不辣×1+飲瓶x1)": 489,
+        "脆皮雞腿分享餐(脆皮雞大腿×3+脆皮雞小腿×3)": 279,
+        "脆皮雞三腿自選餐(脆皮雞翅×1+脆皮雞大腿x1+脆皮雞小腿x1)": 125,
+        "脆皮雞腿單人套餐(脆皮雞大腿×1+脆皮雞小腿x1+薯條o地瓜條or甜不辣x1+紅茶or綠茶×1)": 139,
+        "脆皮雞翅分享餐(脆皮雞翅×6)": 189,
+        "脆皮雞排單人套餐(脆皮雞排+薯條o地瓜條or甜不辣x1+紅茶or綠茶×1)": 125,
+        "雞排＋珍奶套餐(脆皮雞排+烈火黑糖珍珠鮮奶茶)": 115
       },
       "炸雞": {
         "脆皮雞排": 85,
@@ -137,109 +143,71 @@
 
     function addRow() {
       const row = document.createElement('tr');
-
       const typeSel = document.createElement('select');
-      typeSel.innerHTML = `<option disabled selected>請選分類</option>` +
-        Object.keys(menu).map(c => `<option value="${c}">${c}</option>`).join('');
-
+      typeSel.innerHTML = `<option disabled selected>請選分類</option>` + Object.keys(menu).map(c => `<option value="${c}">${c}</option>`).join('');
       const itemSel = document.createElement('select');
       itemSel.innerHTML = `<option disabled selected>請先選分類</option>`;
-
-      const price = document.createElement('td');
-      price.textContent = "-";
-
+      const priceCell = document.createElement('td');
+      priceCell.textContent = "-";
       const qtyInput = document.createElement('input');
-      qtyInput.type = 'number';
-      qtyInput.min = 1;
-      qtyInput.value = 1;
-
+      qtyInput.type = 'number'; qtyInput.min = 1; qtyInput.value = 1;
       const noteInput = document.createElement('input');
-      noteInput.type = 'text';
-      noteInput.placeholder = '備註';
+      noteInput.type = 'text'; noteInput.placeholder = '備註';
 
       typeSel.onchange = () => {
         itemSel.innerHTML = `<option disabled selected>請選擇品項</option>` +
-          Object.keys(menu[typeSel.value])
-            .map(i => `<option value="${i}">${i}</option>`).join('');
+          Object.keys(menu[typeSel.value]).map(i => `<option value="${i}">${i}</option>`).join('');
       };
-
       itemSel.onchange = () => {
-        price.textContent = menu[typeSel.value][itemSel.value];
+        priceCell.textContent = menu[typeSel.value][itemSel.value];
       };
 
       row.appendChild(document.createElement('td')).appendChild(typeSel);
       row.appendChild(document.createElement('td')).appendChild(itemSel);
-      row.appendChild(price);
+      row.appendChild(priceCell);
       row.appendChild(document.createElement('td')).appendChild(qtyInput);
       row.appendChild(document.createElement('td')).appendChild(noteInput);
-
       document.getElementById('orderTable').appendChild(row);
     }
 
     function generateSummary() {
-  let total = 0;
-  let hasChicken = false;
-  const rows = document.querySelectorAll('#orderTable tr');
-  let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
+      let total = 0;
+      let hasChicken = false;
+      const rows = document.querySelectorAll('#orderTable tr');
+      let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
 
-  rows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    const type = cells[0].querySelector('select').value;
-    const item = cells[1].querySelector('select').value;
-    let unitPrice = parseInt(cells[2].textContent);
-    const qty = parseInt(cells[3].querySelector('input').value);
-    const note = cells[4].querySelector('input').value;
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const type = cells[0].querySelector('select').value;
+        const item = cells[1].querySelector('select').value;
+        let unitPrice = parseInt(cells[2].textContent);
+        const qty = parseInt(cells[3].querySelector('input').value);
+        const note = cells[4].querySelector('input').value;
+        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
+        if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) hasChicken = true;
+      });
 
-    if (!item || isNaN(unitPrice) || isNaN(qty)) return;
-
-    // 判斷是否含雞排類商品（套用搭配價條件）
-    if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) {
-      hasChicken = true;
-    }
-  });
-
-  rows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    const type = cells[0].querySelector('select').value;
-    const item = cells[1].querySelector('select').value;
-    let unitPrice = parseInt(cells[2].textContent);
-    const qty = parseInt(cells[3].querySelector('input').value);
-    const note = cells[4].querySelector('input').value;
-
-    if (!item || isNaN(unitPrice) || isNaN(qty)) return;
-
-    // 套用飲料搭配價邏輯
-    if (hasChicken && type === '飲料') {
-      const discountMap = {
-        '錫蘭紅茶冰': 20,
-        '古早味紅茶冰': 20,
-        '綠茶': 20,
-        '仙草甘茶': 25,
-        '派克奶茶': 35,
-        '派克鮮奶茶': 40,
-        '古早味鮮奶茶': 45,
-        '多多綠': 35,
-        '烈火黑糖珍珠奶茶': 45,
-        '烈火黑糖珍珠鮮奶茶': 50,
-        '烈火黑糖珍珠撞奶': 55,
-        '布丁奶茶': 45,
-        '布丁鮮奶茶': 50,
-        '可口可樂': 25,
-        '雪碧': 25,
-        '可口可樂/杯': 30,
-        '雪碧/杯': 30
-      };
-      if (discountMap[item]) unitPrice = discountMap[item];
-    }
-
-    const subtotal = unitPrice * qty;
-    total += subtotal;
-    summaryHTML += `<tr><td>${item}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
-  });
-
-  summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
-  document.getElementById('summary').innerHTML = summaryHTML;
-}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const type = cells[0].querySelector('select').value;
+        const item = cells[1].querySelector('select').value;
+        let unitPrice = parseInt(cells[2].textContent);
+        const qty = parseInt(cells[3].querySelector('input').value);
+        const note = cells[4].querySelector('input').value;
+        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
+        if (hasChicken && type === '飲料') {
+          const discountMap = {
+            '錫蘭紅茶冰': 20, '古早味紅茶冰': 20, '綠茶': 20, '仙草甘茶': 25,
+            '派克奶茶': 35, '派克鮮奶茶': 40, '古早味鮮奶茶': 45, '多多綠': 35,
+            '烈火黑糖珍珠奶茶': 45, '烈火黑糖珍珠鮮奶茶': 50, '烈火黑糖珍珠撞奶': 55,
+            '布丁奶茶': 45, '布丁鮮奶茶': 50,
+            '可口可樂': 25, '雪碧': 25, '可口可樂/杯': 30, '雪碧/杯': 30
+          };
+          if (discountMap[item]) unitPrice = discountMap[item];
+        }
+        const subtotal = unitPrice * qty;
+        total += subtotal;
+        summaryHTML += `<tr><td>${item}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
       });
 
       summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
