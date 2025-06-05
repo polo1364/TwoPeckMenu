@@ -55,8 +55,7 @@
   body * {
     display: none !important;
   }
-  #summary, #summary *,
-  #footer, #footer * {
+  #summary, #summary *, #footer, #footer * {
     display: block !important;
     visibility: visible !important;
   }
@@ -64,24 +63,42 @@
   #summary table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    table-layout: fixed;
   }
+
   #summary th, #summary td {
     border: 1px solid #000;
-    padding: 8px;
-    text-align: center;
+    padding: 6px;
+    font-size: 16px;
+    word-break: break-word;
+    white-space: normal;
   }
+
+  #summary th:nth-child(1),
+  #summary td:nth-child(1) { width: 40%; }
+
+  #summary th:nth-child(2),
+  #summary td:nth-child(2) { width: 10%; }
+
+  #summary th:nth-child(3),
+  #summary td:nth-child(3) { width: 10%; }
+
+  #summary th:nth-child(4),
+  #summary td:nth-child(4) { width: 15%; }
+
+  #summary th:nth-child(5),
+  #summary td:nth-child(5) { width: 25%; }
 
   #footer {
     margin-top: 40px;
     text-align: center;
     font-size: 20px;
   }
+
   #footer p {
     margin: 5px 0;
   }
 }
-
 
   </style>
 </head>
