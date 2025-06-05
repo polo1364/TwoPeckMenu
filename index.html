@@ -169,24 +169,68 @@
     }
 
     function generateSummary() {
-      let total = 0;
-      const rows = document.querySelectorAll('#orderTable tr');
-      let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
+  let total = 0;
+  let hasChicken = false;
+  const rows = document.querySelectorAll('#orderTable tr');
+  let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
 
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const type = cells[0].querySelector('select').value;
-        const item = cells[1].querySelector('select').value;
-        const unitPrice = parseInt(cells[2].textContent);
-        const qty = parseInt(cells[3].querySelector('input').value);
-        const note = cells[4].querySelector('input').value;
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const type = cells[0].querySelector('select').value;
+    const item = cells[1].querySelector('select').value;
+    let unitPrice = parseInt(cells[2].textContent);
+    const qty = parseInt(cells[3].querySelector('input').value);
+    const note = cells[4].querySelector('input').value;
 
-        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
+    if (!item || isNaN(unitPrice) || isNaN(qty)) return;
 
-        const subtotal = unitPrice * qty;
-        total += subtotal;
+    // 判斷是否含雞排類商品（套用搭配價條件）
+    if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) {
+      hasChicken = true;
+    }
+  });
 
-        summaryHTML += `<tr><td>${item}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const type = cells[0].querySelector('select').value;
+    const item = cells[1].querySelector('select').value;
+    let unitPrice = parseInt(cells[2].textContent);
+    const qty = parseInt(cells[3].querySelector('input').value);
+    const note = cells[4].querySelector('input').value;
+
+    if (!item || isNaN(unitPrice) || isNaN(qty)) return;
+
+    // 套用飲料搭配價邏輯
+    if (hasChicken && type === '飲料') {
+      const discountMap = {
+        '錫蘭紅茶冰': 20,
+        '古早味紅茶冰': 20,
+        '綠茶': 20,
+        '仙草甘茶': 25,
+        '派克奶茶': 35,
+        '派克鮮奶茶': 40,
+        '古早味鮮奶茶': 45,
+        '多多綠': 35,
+        '烈火黑糖珍珠奶茶': 45,
+        '烈火黑糖珍珠撞奶': 50,
+        '布丁奶茶': 50,
+        '布丁鮮奶茶': 50,
+        '可口可樂': 25,
+        '雪碧': 25,
+        '可口可樂/杯': 30,
+        '雪碧/杯': 30
+      };
+      if (discountMap[item]) unitPrice = discountMap[item];
+    }
+
+    const subtotal = unitPrice * qty;
+    total += subtotal;
+    summaryHTML += `<tr><td>${item}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
+  });
+
+  summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
+  document.getElementById('summary').innerHTML = summaryHTML;
+}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
       });
 
       summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
