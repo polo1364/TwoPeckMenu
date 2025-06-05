@@ -45,15 +45,15 @@
     #summary {
       margin-top: 20px;
     }
-    @media print {
-  .no-print { display: none; }
-  body::after {
-    content: "大瑞科技\\A地址:高雄市大寮區鳳林二路532號\\A電話:(07)7871875";
-    white-space: pre-line;
+    .only-print {
+  display: none;
+  text-align: center;
+  font-size: 20px;
+  margin-top: 30px;
+}
+@media print {
+  .only-print {
     display: block;
-    text-align: center;
-    margin-top: 30px;
-    font-size: 20px;
   }
 }
 
@@ -222,5 +222,11 @@
 
     window.onload = addRow;
   </script>
+  <div id="footer" class="only-print">
+  <p>大瑞科技</p>
+  <p>高雄市大寮區鳳林二路532號</p>
+  <p>(07)7871875</p>
+</div>
+
 </body>
 </html>
