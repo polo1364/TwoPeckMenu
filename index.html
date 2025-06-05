@@ -53,14 +53,10 @@
 }
 @media print {
   body * {
-    visibility: hidden;
+    display: none !important;
   }
   #summary, #footer {
-    visibility: visible;
-  }
-  #summary, #footer {
-    position: relative;
-    z-index: 1;
+    display: block !important;
   }
 }
 
