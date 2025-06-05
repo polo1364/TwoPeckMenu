@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>雙饗炸雞點餐統計</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>雙饗炸雞點餐系統</title>
   <style>
     body {
       font-family: "Microsoft JhengHei", sans-serif;
-      background: #fffbe6;
-      margin: 0;
       padding: 20px;
-      color: #333;
+      max-width: 960px;
+      margin: auto;
+      background: #fffbe6;
     }
     h1, h2 {
       text-align: center;
@@ -19,110 +19,186 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 30px;
+      margin: 20px 0;
       background: #fff;
     }
     th, td {
       border: 1px solid #ccc;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background-color: #f7e7e7;
-    }
-    .note {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 30px;
+      padding: 6px;
       text-align: center;
     }
-    input[type="number"] {
-      width: 60px;
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
     }
-    #result {
-      font-size: 18px;
-      font-weight: bold;
+    .buttons {
+      text-align: center;
+      margin: 20px 0;
+    }
+    #summary {
       margin-top: 20px;
-      text-align: center;
     }
-    button {
-      display: block;
-      margin: 0 auto 30px;
-      padding: 10px 20px;
-      font-size: 16px;
+    @media print {
+      .no-print { display: none; }
+      body::after {
+        content: "大瑞科技
+地址:高雄市大寮區鳳林二路532號
+電話:(07)7871875";
+        white-space: pre-line;
+        display: block;
+        text-align: center;
+        margin-top: 30px;
+        font-size: 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>雙饗炸雞點餐統計</h1>
-
-  <form id="orderForm">
-    <h2>炸雞系列</h2>
+  <h1>雙饗炸雞點餐系統</h1>
+  <div class="no-print">
     <table>
-      <tr><th>品項</th><th>單價</th><th>數量</th></tr>
-      <tr><td>脆皮雞排</td><td>85</td><td><input type="number" name="脆皮雞排" min="0" value="0"></td></tr>
-      <tr><td>脆皮雞腿排</td><td>85</td><td><input type="number" name="脆皮雞腿排" min="0" value="0"></td></tr>
-      <tr><td>脆皮雞塊</td><td>70</td><td><input type="number" name="脆皮雞塊" min="0" value="0"></td></tr>
-      <tr><td>脆皮雞翅</td><td>35</td><td><input type="number" name="脆皮雞翅" min="0" value="0"></td></tr>
-      <tr><td>脆皮雞腿</td><td>50</td><td><input type="number" name="脆皮雞腿" min="0" value="0"></td></tr>
-      <tr><td>脆皮雞柳</td><td>75</td><td><input type="number" name="脆皮雞柳" min="0" value="0"></td></tr>
+      <thead>
+        <tr><th>分類</th><th>品項</th><th>價格</th><th>數量</th><th>備註</th></tr>
+      </thead>
+      <tbody id="orderTable"></tbody>
     </table>
 
-    <h2>飲料系列</h2>
-    <table>
-      <tr><th>飲品</th><th>單價</th><th>數量</th></tr>
-      <tr><td>紅茶</td><td>25</td><td><input type="number" name="紅茶" min="0" value="0"></td></tr>
-      <tr><td>綠茶</td><td>20</td><td><input type="number" name="綠茶" min="0" value="0"></td></tr>
-      <tr><td>阿薩姆奶茶</td><td>25</td><td><input type="number" name="阿薩姆奶茶" min="0" value="0"></td></tr>
-      <tr><td>Just One Eat 珍奶</td><td>45</td><td><input type="number" name="Just One Eat 珍奶" min="0" value="0"></td></tr>
-    </table>
-
-    <h2>點心系列</h2>
-    <table>
-      <tr><th>點心</th><th>單價</th><th>數量</th></tr>
-      <tr><td>QQ地瓜球</td><td>35</td><td><input type="number" name="QQ地瓜球" min="0" value="0"></td></tr>
-      <tr><td>洋蔥圈</td><td>35</td><td><input type="number" name="洋蔥圈" min="0" value="0"></td></tr>
-      <tr><td>梅子地瓜條</td><td>35</td><td><input type="number" name="梅子地瓜條" min="0" value="0"></td></tr>
-      <tr><td>脆皮甜不辣</td><td>35</td><td><input type="number" name="脆皮甜不辣" min="0" value="0"></td></tr>
-    </table>
-
-    <button type="button" onclick="calculateTotal()">計算總金額</button>
-  </form>
-
-  <div id="result"></div>
-
-  <div class="note">
-    調味：胡椒、咖哩、海苔、蒜味、梅子、芥末、起士、都不加 ｜ 辣度：微辣、小辣、中辣、大辣
+    <div class="buttons">
+      <button onclick="addRow()">新增品項</button>
+      <button onclick="generateSummary()">統計總金額</button>
+      <button onclick="print()">列印</button>
+      <button onclick="clearAll()">清除</button>
+    </div>
   </div>
 
+  <div id="summary"></div>
+
   <script>
-    function calculateTotal() {
-      const prices = {
+    const menu = {
+      "套餐": {
+        "脆皮雞腿全家快樂分享餐": 489,
+        "脆皮雞腿分享餐": 279,
+        "脆皮雞三腿自選餐": 125,
+        "脆皮雞腿單人套餐": 139,
+        "脆皮雞翅分享餐": 189,
+        "脆皮雞排單人套餐": 125,
+        "雞排＋珍奶套餐": 115
+      },
+      "炸雞": {
         "脆皮雞排": 85,
         "脆皮雞腿排": 85,
         "脆皮雞塊": 70,
+        "脆皮雞柳": 75,
         "脆皮雞翅": 35,
         "脆皮雞腿": 50,
-        "脆皮雞柳": 75,
-        "紅茶": 25,
+        "泰酥星星魚（鯛魚）": 60,
+        "爆蛋柳葉魚": 60,
+        "酥炸三角骨肉": 65,
+        "脆皮魷魚": 75,
+        "脆皮雞軟骨": 70
+      },
+      "飲料": {
         "綠茶": 20,
+        "紅茶": 25,
         "阿薩姆奶茶": 25,
-        "Just One Eat 珍奶": 45,
+        "鮮奶茶": 25,
+        "百香綠": 35,
+        "檸檬綠": 35,
+        "古早味紅茶": 35,
+        "芒果綠": 35,
+        "Just One Eat 珍奶": 45
+      },
+      "點心": {
+        "馬力歐起司條": 50,
         "QQ地瓜球": 35,
         "洋蔥圈": 35,
+        "香酥四季豆": 35,
         "梅子地瓜條": 35,
-        "脆皮甜不辣": 35
+        "脆皮甜不辣": 35,
+        "脆皮香菇": 35,
+        "脆皮雞皮": 35,
+        "脆皮上里肌": 35,
+        "脆皮雞心": 30,
+        "脆皮花枝丸": 30,
+        "脆皮米血": 25,
+        "脆皮黑輪片": 25,
+        "脆皮豆干": 25,
+        "脆皮米血糕": 25,
+        "雞蘿蔔糕": 25
+      }
+    };
+
+    function addRow() {
+      const row = document.createElement('tr');
+
+      const typeSel = document.createElement('select');
+      typeSel.innerHTML = `<option disabled selected>請選分類</option>` +
+        Object.keys(menu).map(c => `<option value="${c}">${c}</option>`).join('');
+
+      const itemSel = document.createElement('select');
+      itemSel.innerHTML = `<option disabled selected>請先選分類</option>`;
+
+      const price = document.createElement('td');
+      price.textContent = "-";
+
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.min = 1;
+      qtyInput.value = 1;
+
+      const noteInput = document.createElement('input');
+      noteInput.type = 'text';
+      noteInput.placeholder = '備註';
+
+      typeSel.onchange = () => {
+        itemSel.innerHTML = `<option disabled selected>請選擇品項</option>` +
+          Object.keys(menu[typeSel.value])
+            .map(i => `<option value="${i}">${i}</option>`).join('');
       };
 
+      itemSel.onchange = () => {
+        price.textContent = menu[typeSel.value][itemSel.value];
+      };
+
+      row.appendChild(document.createElement('td')).appendChild(typeSel);
+      row.appendChild(document.createElement('td')).appendChild(itemSel);
+      row.appendChild(price);
+      row.appendChild(document.createElement('td')).appendChild(qtyInput);
+      row.appendChild(document.createElement('td')).appendChild(noteInput);
+
+      document.getElementById('orderTable').appendChild(row);
+    }
+
+    function generateSummary() {
       let total = 0;
-      const form = document.forms['orderForm'];
-      Object.keys(prices).forEach(item => {
-        const qty = parseInt(form[item].value) || 0;
-        total += qty * prices[item];
+      const rows = document.querySelectorAll('#orderTable tr');
+      let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
+
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const type = cells[0].querySelector('select').value;
+        const item = cells[1].querySelector('select').value;
+        const unitPrice = parseInt(cells[2].textContent);
+        const qty = parseInt(cells[3].querySelector('input').value);
+        const note = cells[4].querySelector('input').value;
+
+        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
+
+        const subtotal = unitPrice * qty;
+        total += subtotal;
+
+        summaryHTML += `<tr><td>${item}</td><td>${unitPrice}</td><td>${qty}</td><td>${subtotal}</td><td>${note}</td></tr>`;
       });
 
-      document.getElementById("result").textContent = `總金額：$${total} 元`;
+      summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
+      document.getElementById('summary').innerHTML = summaryHTML;
     }
+
+    function clearAll() {
+      document.getElementById('orderTable').innerHTML = '';
+      document.getElementById('summary').innerHTML = '';
+    }
+
+    window.onload = addRow;
   </script>
 </body>
 </html>
