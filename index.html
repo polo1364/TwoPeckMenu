@@ -55,26 +55,31 @@
   body * {
     display: none !important;
   }
-
   #summary, #summary *, #footer, #footer * {
     display: block !important;
     visibility: visible !important;
   }
-
+  .only-print {
+  display: block !important;
+  text-align: center;
+  font-size: 20px;
+}
   #summary table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* ✨ 這一行新增 */
+  margin-top: 20px;
+}
 
   #summary th, #summary td {
-    border: 1px solid #000;
-    padding: 6px;
-    font-size: 16px;
-    word-break: break-word; /* ✨ 長字換行 */
-    white-space: normal;
-    text-align: center;
-  }
+  border: 1px solid #000;
+  padding: 6px;
+  font-size: 14px; /* 預設小一點 */
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  text-align: center;
+}
 
   /* ✨ 欄位寬度設定，避免不均 */
   #summary th:nth-child(1), #summary td:nth-child(1) { width: 40%; }
@@ -92,6 +97,10 @@
   #footer p {
     margin: 5px 0;
   }
+}
+    @page {
+  size: A4 portrait;
+  margin: 10mm;
 }
 
   </style>
