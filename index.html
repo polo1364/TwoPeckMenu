@@ -52,8 +52,15 @@
   margin-top: 30px;
 }
 @media print {
-  .only-print {
-    display: block;
+  body * {
+    visibility: hidden;
+  }
+  #summary, #footer {
+    visibility: visible;
+  }
+  #summary, #footer {
+    position: relative;
+    z-index: 1;
   }
 }
 
