@@ -52,6 +52,21 @@
       margin-top: 30px;
     }
     @media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html {
+    -webkit-print-color-adjust: exact;
+  }
+
   body * {
     display: none !important;
   }
@@ -67,7 +82,8 @@
   }
 
   #summary {
-    margin-top: 20px;
+    margin-top: 0;
+    padding: 20px;
     font-family: "Microsoft JhengHei", sans-serif;
   }
 
@@ -83,7 +99,6 @@
     padding: 6px 8px;
     font-size: 16px;
     word-break: break-word;
-    white-space: normal;
     text-align: center;
     vertical-align: middle;
   }
@@ -91,11 +106,6 @@
   #summary th {
     background: #f2f2f2;
     font-weight: bold;
-  }
-
-  #summary td {
-    max-width: 200px;
-    overflow-wrap: break-word;
   }
 
   #footer {
@@ -107,6 +117,12 @@
 
   #footer p {
     margin: 4px 0;
+  }
+
+  #printTime {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 10px;
   }
 }
   </style>
