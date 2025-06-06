@@ -72,54 +72,77 @@
       }
     }
     @media print {
-      @page { size: A4; margin: 0; }
-      body {
-        background: white !important;
-        margin: 0 !important;
-        padding: 0 !important;
-      }
-      html { -webkit-print-color-adjust: exact; }
-      body * { display: none !important; }
-      #summary, #summary *,
-      #footer, #footer *,
-      #printTime { display: block !important; visibility: visible !important; }
-      #printTime {
-        text-align: center;
-        font-size: 14px;
-        margin-top: 10px;
-      }
-      #summary {
-        margin-top: 0;
-        padding: 20px;
-        font-family: "Microsoft JhengH#summary table {
-  table-layout: auto;
-  width: 100%;
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  body {
+    background: white !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  html {
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* 隱藏畫面上其他所有東西 */
+  body * {
+    display: none !important;
+  }
+
+  /* 只顯示統計結果與公司資訊 */
+  #summary, #summary *, #footer, #footer *, #printTime {
+    display: block !important;
+    visibility: visible !important;
+  }
+
+  #printTime {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  #summary {
+    margin-top: 0;
+    padding: 20px;
+    font-family: "Microsoft JhengHei", sans-serif;
+  }
+
+  #summary table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+    margin-top: 20px;
+  }
+
+  #summary th, #summary td {
+    border: 1px solid #000;
+    padding: 6px 8px;
+    font-size: 16px;
+    word-break: break-word;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  #summary th {
+    background: #f2f2f2;
+    font-weight: bold;
+  }
+
+  #footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 18px;
+    font-family: "Microsoft JhengHei", sans-serif;
+  }
+
+  #footer p {
+    margin: 4px 0;
+  }
 }
-#summary td {
-  word-break: break-word;
-} margin-top: 20px;
-        table-layout: auto;
-      }
-      #summary th, #summary td {
-        border: 1px solid #000;
-        padding: 6px 8px;
-        font-size: 16px;
-        word-break: break-word;
-        text-align: center;
-        vertical-align: middle;
-      }
-      #summary th {
-        background: #f2f2f2;
-        font-weight: bold;
-      }
-      #footer {
-        margin-top: 40px;
-        text-align: center;
-        font-size: 18px;
-        font-family: "Microsoft JhengHei", sans-serif;
-      }
-      #footer p { margin: 4px 0; }
-    }
+
   </style>
 </head>
 <body>
@@ -221,18 +244,23 @@
   let total = 0;
   let hasChicken = false;
   const rows = document.querySelectorAll('#orderTable tr');
-  let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
+  let summaryHTML = '<h2>統計結果</h2>';
+  summaryHTML += '<table>';
+  summaryHTML += '<thead><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr></thead>';
+  summaryHTML += '<tbody>';
 
-  // 判斷是否含炸雞主餐（影響飲料折扣）
+  // 先偵測是否有主餐（影響飲料折扣）
   rows.forEach(row => {
     const cells = row.querySelectorAll('td');
     const type = cells[0].querySelector('select')?.value;
     const item = cells[1].querySelector('select')?.value;
     const unitPrice = parseInt(cells[2].textContent);
-    if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) hasChicken = true;
+    if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) {
+      hasChicken = true;
+    }
   });
 
-  // 實際列出每列內容
+  // 填入每一列資料
   rows.forEach(row => {
     const cells = row.querySelectorAll('td');
     const type = cells[0].querySelector('select')?.value;
@@ -243,7 +271,6 @@
 
     if (!item || isNaN(unitPrice) || isNaN(qty)) return;
 
-    // 套用飲料折扣（有主餐才折）
     if (hasChicken && type === '飲料' && discountMap[item]) {
       unitPrice = discountMap[item];
     }
@@ -251,23 +278,21 @@
     const subtotal = unitPrice * qty;
     total += subtotal;
 
-    // ✅ 這裡是重點：一整列5格
+    // 🔧 確保每一筆是一列五格，避免誤換行
     summaryHTML += `<tr>
-      <td>${item.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
+      <td>${item}</td>
       <td>${unitPrice}</td>
       <td>${qty}</td>
       <td>${subtotal}</td>
-      <td>${note.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
+      <td>${note}</td>
     </tr>`;
   });
 
-  // 總金額列
-  summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total.toLocaleString()}</td></tr></table>`;
-
-  // 輸出到畫面
+  summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total.toLocaleString()}</td></tr>`;
+  summaryHTML += '</tbody></table>';
   document.getElementById('summary').innerHTML = summaryHTML;
 
-  // 列印時間
+  // 顯示列印時間
   const now = new Date();
   const timeString = now.toLocaleString("zh-TW", { hour12: false });
   document.getElementById('printTime').innerText = "列印時間：" + timeString;
