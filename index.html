@@ -1,10 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>派克炸雞點餐系統</title>
+  <style>
+    body {
+      font-family: "Microsoft JhengHei", sans-serif;
+      padding: 20px;
+      max-width: 960px;
+      margin: auto;
+      background: #fffbe6;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #b30000;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: #fff;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+    select, input[type="number"], input[type="text"] {
+      width: 100%;
+      padding: 4px;
+      box-sizing: border-box;
+    }
+    .buttons {
+      text-align: center;
+      margin: 20px 0;
+    }
+    button {
+      margin: 0 8px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #summary {
+      margin-top: 20px;
+    }
+    .only-print {
+      display: none;
+      text-align: center;
+      font-size: 20px;
+      margin-top: 30px;
+    }
+    @media screen and (max-width: 768px) {
+      body { padding: 10px; }
+      table { font-size: 14px; }
+      th, td { padding: 6px; }
+      .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+      button {
+        flex: 1 1 40%;
+        min-width: 120px;
+        font-size: 14px;
+        padding: 10px;
+      }
+      select, input[type="number"], input[type="text"] {
+        font-size: 14px;
+      }
+    }
+    @media print {
+      @page { size: A4; margin: 0; }
+      body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      html { -webkit-print-color-adjust: exact; }
+      body * { display: none !important; }
+      #summary, #summary *,
+      #footer, #footer *,
+      #printTime { display: block !important; visibility: visible !important; }
+      #printTime {
+        text-align: center;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+      #summary {
+        margin-top: 0;
+        padding: 20px;
+        font-family: "Microsoft JhengHei", sans-serif;
+      }
+      #summary table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        table-layout: auto;
+      }
+      #summary th, #summary td {
+        border: 1px solid #000;
+        padding: 6px 8px;
+        font-size: 16px;
+        word-break: break-word;
+        text-align: center;
+        vertical-align: middle;
+      }
+      #summary th {
+        background: #f2f2f2;
+        font-weight: bold;
+      }
+      #footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 18px;
+        font-family: "Microsoft JhengHei", sans-serif;
+      }
+      #footer p { margin: 4px 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>派克炸雞點餐系統</h1>
+  <div class="no-print">
+    <table>
+      <thead>
+        <tr><th>分類</th><th>品項</th><th>價格</th><th>數量</th><th>備註</th></tr>
+      </thead>
+      <tbody id="orderTable"></tbody>
+    </table>
+    <div class="buttons">
+      <button onclick="addRow()">➕ 新增品項</button>
+      <button onclick="generateSummary()">📊 統計總金額</button>
+      <button onclick="print()">🖨️ 列印</button>
+      <button onclick="clearAll()">🗑️ 清除</button>
+    </div>
+  </div>
+
+  <div id="summary"></div>
+  <div id="printTime" class="only-print"></div>
+  <div id="footer" class="only-print">
+    <p>大瑞科技</p>
+    <p>高雄市大寮區鳳林二路532號</p>
+    <p><a href="tel:077871875">(07)7871875</a></p>
+  </div>
+
+  <script>
+    const menu = {
+      "套餐": {
+        "1號餐(脆皮雞腿×7+脆皮雞翅×2+馬鈴薯x1+地瓜條x1+甜不辣×1+飲瓶x1)": 489,
+        "2號餐(脆皮雞大腿×3+脆皮雞小腿×3)": 279,
+        "3號餐(脆皮雞翅×1+脆皮雞大腿x1+脆皮雞小腿x1)": 125,
+        "4號餐(脆皮雞大腿×1+脆皮雞小腿x1+薯條o地瓜條or甜不辣x1+紅茶or綠茶×1)": 139,
+        "5號餐(脆皮雞翅×6)": 189,
+        "6號餐(脆皮雞排+薯條o地瓜條or甜不辣x1+紅茶or綠茶×1)": 125,
+        "7號餐（脆皮雞排+烈火黑糖珍珠鮮奶茶)": 115
+      },
+      "炸雞": {
+        "脆皮雞排": 85,
+        "脆皮雞腿排": 85,
+        "脆皮雞塊": 70,
+        "脆皮雞柳": 75,
+        "脆皮雞翅": 35,
+        "脆皮雞腿": 50,
+        "泰酥星星魚（鯛魚）": 60,
+        "爆蛋柳葉魚": 60,
+        "酥炸三角骨肉": 65,
+        "脆皮魷魚": 75,
+        "脆皮雞軟骨": 70
+      },
+      "飲料": {
+        "錫蘭紅茶冰": 30, "古早味紅茶冰": 30, "綠茶": 30, "仙草甘茶": 35,
+        "派克奶茶": 45, "派克鮮奶茶": 50, "古早味鮮奶茶": 55,
+        "多多綠": 45, "烈火黑糖珍珠奶茶": 55, "烈火黑糖珍珠鮮奶茶": 60,
+        "烈火黑糖珍珠撞奶": 65, "布丁奶茶": 55, "布丁鮮奶茶": 60,
+        "可口可樂": 30, "雪碧": 30, "可口可樂/杯": 35, "雪碧/杯": 35
+      },
+      "點心": {
+        "馬加駱起司條": 50, "波波起司球": 35, "脆皮馬鈴薯條": 35,
+        "玉米布丁酥": 35, "煉乳銀絲捲": 35, "梅子地瓜條": 35,
+        "脆皮甜不辣": 35, "脆皮杏鮑菇": 35, "QQ地瓜球": 35,
+        "洋蔥圈": 35, "香酥四季豆": 35, "脆皮雞皮": 35,
+        "脆皮七里香": 35, "脆皮雞心": 35, "脆皮花枝丸": 30,
+        "酥炸芋頭餅": 30, "薯餅": 25, "手工黑輪片": 25,
+        "脆皮百頁豆腐": 25, "脆皮米腸": 25, "脆皮血糕": 25, "蘿蔔糕": 25
+      }
+    };
+
+    const discountMap = {
+      '錫蘭紅茶冰': 20, '古早味紅茶冰': 20, '綠茶': 20, '仙草甘茶': 25,
+      '派克奶茶': 35, '派克鮮奶茶': 40, '古早味鮮奶茶': 45, '多多綠': 35,
+      '烈火黑糖珍珠奶茶': 45, '烈火黑糖珍珠鮮奶茶': 50, '烈火黑糖珍珠撞奶': 55,
+      '布丁奶茶': 45, '布丁鮮奶茶': 50, '可口可樂': 25, '雪碧': 25,
+      '可口可樂/杯': 30, '雪碧/杯': 30
+    };
+
+    function addRow() {
+      const row = document.createElement('tr');
+      const typeSel = document.createElement('select');
+      typeSel.innerHTML = `<option disabled selected>請選分類</option>` + Object.keys(menu).map(c => `<option value="${c}">${c}</option>`).join('');
+      const itemSel = document.createElement('select');
+      itemSel.innerHTML = `<option disabled selected>請先選分類</option>`;
+      const priceCell = document.createElement('td');
+      priceCell.textContent = "-";
+      const qtyInput = document.createElement('input'); qtyInput.type = 'number'; qtyInput.min = 1; qtyInput.value = 1;
+      const noteInput = document.createElement('input'); noteInput.type = 'text'; noteInput.placeholder = '備註';
+      typeSel.onchange = () => { itemSel.innerHTML = `<option disabled selected>請選擇品項</option>` + Object.keys(menu[typeSel.value]).map(i => `<option value="${i}">${i}</option>`).join(''); };
+      itemSel.onchange = () => { priceCell.textContent = menu[typeSel.value][itemSel.value]; };
+      row.appendChild(document.createElement('td')).appendChild(typeSel);
+      row.appendChild(document.createElement('td')).appendChild(itemSel);
+      row.appendChild(priceCell);
+      row.appendChild(document.createElement('td')).appendChild(qtyInput);
+      row.appendChild(document.createElement('td')).appendChild(noteInput);
+      document.getElementById('orderTable').appendChild(row);
+    }
+
     function generateSummary() {
       let total = 0;
       let hasChicken = false;
       const rows = document.querySelectorAll('#orderTable tr');
       let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
-      
-      // 判斷是否有主餐，供飲料折扣使用
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
         const type = cells[0].querySelector('select')?.value;
@@ -12,8 +228,6 @@
         const unitPrice = parseInt(cells[2].textContent);
         if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) hasChicken = true;
       });
-
-      // 產出統計表格內容
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
         const type = cells[0].querySelector('select')?.value;
@@ -35,11 +249,8 @@
           <td>${note.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
         </tr>`;
       });
-
-      summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
+      summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total.toLocaleString()}</td></tr></table>`;
       document.getElementById('summary').innerHTML = summaryHTML;
-
-      // 加上列印時間
       const now = new Date();
       const timeString = now.toLocaleString("zh-TW", { hour12: false });
       document.getElementById('printTime').innerText = "列印時間：" + timeString;
