@@ -91,12 +91,13 @@
       #summary {
         margin-top: 0;
         padding: 20px;
-        font-family: "Microsoft JhengHei", sans-serif;
-      }
-      #summary table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
+        font-family: "Microsoft JhengH#summary table {
+  table-layout: auto;
+  width: 100%;
+}
+#summary td {
+  word-break: break-word;
+} margin-top: 20px;
         table-layout: auto;
       }
       #summary th, #summary td {
@@ -217,44 +218,60 @@
     }
 
     function generateSummary() {
-      let total = 0;
-      let hasChicken = false;
-      const rows = document.querySelectorAll('#orderTable tr');
-      let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const type = cells[0].querySelector('select')?.value;
-        const item = cells[1].querySelector('select')?.value;
-        const unitPrice = parseInt(cells[2].textContent);
-        if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) hasChicken = true;
-      });
-      rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        const type = cells[0].querySelector('select')?.value;
-        const item = cells[1].querySelector('select')?.value;
-        let unitPrice = parseInt(cells[2].textContent);
-        const qty = parseInt(cells[3].querySelector('input').value);
-        const note = cells[4].querySelector('input').value;
-        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
-        if (hasChicken && type === '飲料' && discountMap[item]) {
-          unitPrice = discountMap[item];
-        }
-        const subtotal = unitPrice * qty;
-        total += subtotal;
-        summaryHTML += `<tr>
-          <td>${item.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
-          <td>${unitPrice}</td>
-          <td>${qty}</td>
-          <td>${subtotal}</td>
-          <td>${note.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
-        </tr>`;
-      });
-      summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total.toLocaleString()}</td></tr></table>`;
-      document.getElementById('summary').innerHTML = summaryHTML;
-      const now = new Date();
-      const timeString = now.toLocaleString("zh-TW", { hour12: false });
-      document.getElementById('printTime').innerText = "列印時間：" + timeString;
+  let total = 0;
+  let hasChicken = false;
+  const rows = document.querySelectorAll('#orderTable tr');
+  let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
+
+  // 判斷是否含炸雞主餐（影響飲料折扣）
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const type = cells[0].querySelector('select')?.value;
+    const item = cells[1].querySelector('select')?.value;
+    const unitPrice = parseInt(cells[2].textContent);
+    if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) hasChicken = true;
+  });
+
+  // 實際列出每列內容
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const type = cells[0].querySelector('select')?.value;
+    const item = cells[1].querySelector('select')?.value;
+    let unitPrice = parseInt(cells[2].textContent);
+    const qty = parseInt(cells[3].querySelector('input').value);
+    const note = cells[4].querySelector('input').value;
+
+    if (!item || isNaN(unitPrice) || isNaN(qty)) return;
+
+    // 套用飲料折扣（有主餐才折）
+    if (hasChicken && type === '飲料' && discountMap[item]) {
+      unitPrice = discountMap[item];
     }
+
+    const subtotal = unitPrice * qty;
+    total += subtotal;
+
+    // ✅ 這裡是重點：一整列5格
+    summaryHTML += `<tr>
+      <td>${item.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
+      <td>${unitPrice}</td>
+      <td>${qty}</td>
+      <td>${subtotal}</td>
+      <td>${note.replace(/\n/g, ' ').replace(/<br\s*\/?>/gi, ' ')}</td>
+    </tr>`;
+  });
+
+  // 總金額列
+  summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total.toLocaleString()}</td></tr></table>`;
+
+  // 輸出到畫面
+  document.getElementById('summary').innerHTML = summaryHTML;
+
+  // 列印時間
+  const now = new Date();
+  const timeString = now.toLocaleString("zh-TW", { hour12: false });
+  document.getElementById('printTime').innerText = "列印時間：" + timeString;
+}
 
     function clearAll() {
       document.getElementById('orderTable').innerHTML = '';
