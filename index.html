@@ -277,12 +277,12 @@
     total += subtotal;
 
     summaryHTML += `<tr>
-      <td>${item}</td>
-      <td>${unitPrice}</td>
-      <td>${qty}</td>
-      <td>${subtotal}</td>
-      <td>${note}</td>
-    </tr>`;
+  <td>${item}</td>
+  <td>${unitPrice}</td>
+  <td>${qty}</td>
+  <td>${subtotal}</td>
+  <td>${note}</td>
+</tr>`;
   });
 
   summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total.toLocaleString()}</td></tr>`;
