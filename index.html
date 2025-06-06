@@ -4,23 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>派克炸雞點餐系統</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: "Microsoft JhengHei", sans-serif;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
       padding: 20px;
+      background: #fffbe6;
+      color: #333;
       max-width: 960px;
       margin: auto;
-      background: #fffbe6;
     }
     h1, h2 {
       text-align: center;
       color: #b30000;
+      margin: 20px 0;
     }
     table {
       width: 100%;
       border-collapse: collapse;
       margin: 20px 0;
       background: #fff;
+    }
+    th {
+      background-color: #f0f0f0;
+      color: #333;
     }
     th, td {
       border: 1px solid #ccc;
@@ -29,123 +36,85 @@
     }
     select, input[type="number"], input[type="text"] {
       width: 100%;
-      padding: 4px;
+      padding: 6px;
       box-sizing: border-box;
+      font-size: 14px;
     }
     .buttons {
       text-align: center;
       margin: 20px 0;
     }
     button {
-      margin: 0 8px;
+      margin: 6px;
       padding: 10px 20px;
       font-size: 16px;
+      border: none;
+      background: #b30000;
+      color: white;
+      border-radius: 6px;
       cursor: pointer;
     }
-    #summary {
-      margin-top: 20px;
+    button:hover {
+      background: #d40000;
     }
     .only-print {
       display: none;
       text-align: center;
-      font-size: 20px;
+      font-size: 18px;
       margin-top: 30px;
     }
-    @media screen and (max-width: 768px) {
-      body { padding: 10px; }
-      table { font-size: 14px; }
-      th, td { padding: 6px; }
-      .buttons {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 10px;
+    @media print {
+      @page { size: A4; margin: 0; }
+      body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
       }
-      button {
-        flex: 1 1 40%;
-        min-width: 120px;
-        font-size: 14px;
-        padding: 10px;
+      html { -webkit-print-color-adjust: exact; }
+      body * { display: none !important; }
+      #summary, #summary *, #footer, #footer *, #printTime {
+        display: block !important;
+        visibility: visible !important;
       }
-      select, input[type="number"], input[type="text"] {
+      #summary {
+        padding: 20px;
+        font-family: "Microsoft JhengHei", sans-serif;
+      }
+      #summary table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: auto;
+        margin-top: 20px;
+      }
+      #summary th, #summary td {
+        border: 1px solid #000;
+        padding: 6px 8px;
+        font-size: 16px;
+        word-break: break-word;
+        text-align: center;
+        vertical-align: middle;
+      }
+      #summary th {
+        background: #f2f2f2;
+        font-weight: bold;
+      }
+      #footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 18px;
+        font-family: "Microsoft JhengHei", sans-serif;
+      }
+      #footer p { margin: 4px 0; }
+      #printTime {
+        text-align: center;
         font-size: 14px;
+        margin-top: 10px;
       }
     }
-    @media print {
-  @page {
-    size: A4;
-    margin: 0;
-  }
-
-  body {
-    background: white !important;
-    margin: 0 !important;
-    padding: 0 !important;
-  }
-
-  html {
-    -webkit-print-color-adjust: exact;
-  }
-
-  /* 隱藏畫面上其他所有東西 */
-  body * {
-    display: none !important;
-  }
-
-  /* 只顯示統計結果與公司資訊 */
-  #summary, #summary *, #footer, #footer *, #printTime {
-    display: block !important;
-    visibility: visible !important;
-  }
-
-  #printTime {
-    text-align: center;
-    font-size: 14px;
-    margin-top: 10px;
-  }
-
-  #summary {
-    margin-top: 0;
-    padding: 20px;
-    font-family: "Microsoft JhengHei", sans-serif;
-  }
-
-  #summary table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: auto;
-    margin-top: 20px;
-  }
-
-  #summary th, #summary td {
-    border: 1px solid #000;
-    padding: 6px 8px;
-    font-size: 16px;
-    word-break: break-word;
-    text-align: center;
-    vertical-align: middle;
-  }
-
-  #summary th {
-    background: #f2f2f2;
-    font-weight: bold;
-  }
-
-  #footer {
-    margin-top: 40px;
-    text-align: center;
-    font-size: 18px;
-    font-family: "Microsoft JhengHei", sans-serif;
-  }
-
-  #footer p {
-    margin: 4px 0;
-  }
-}
-
   </style>
 </head>
-<body>
+
+  <body>
   <h1>派克炸雞點餐系統</h1>
   <div class="no-print">
     <table>
@@ -163,61 +132,52 @@
   </div>
 
   <div id="summary"></div>
-  <div id="printTime" class="only-print"></div>
   <div id="footer" class="only-print">
     <p>大瑞科技</p>
     <p>高雄市大寮區鳳林二路532號</p>
-    <p><a href="tel:077871875">(07)7871875</a></p>
+    <p>(07)7871875</p>
   </div>
+  <div id="printTime" class="only-print"></div>
 
   <script>
     const menu = {
       "套餐": {
-        "1號餐(脆皮雞腿×7+脆皮雞翅×2+馬鈴薯x1+地瓜條x1+甜不辣×1+飲瓶x1)": 489,
-        "2號餐(脆皮雞大腿×3+脆皮雞小腿×3)": 279,
-        "3號餐(脆皮雞翅×1+脆皮雞大腿x1+脆皮雞小腿x1)": 125,
-        "4號餐(脆皮雞大腿×1+脆皮雞小腿x1+薯條o地瓜條or甜不辣x1+紅茶or綠茶×1)": 139,
-        "5號餐(脆皮雞翅×6)": 189,
-        "6號餐(脆皮雞排+薯條o地瓜條or甜不辣x1+紅茶or綠茶×1)": 130,
-        "7號餐（脆皮雞排+烈火黑糖珍珠鮮奶茶)": 115
+        "1號餐(脆皮雞腿×7+翅×2+馬鈴薯x1+地瓜條x1+甜不辣×1+飲瓶x1)": 489,
+        "2號餐(雞大腿×3+雞小腿×3)": 279,
+        "3號餐(雞翅×1+大腿x1+小腿x1)": 125,
+        "4號餐(大腿×1+小腿x1+薯條/地瓜條/甜不辣+紅茶/綠茶)": 139,
+        "5號餐(雞翅×6)": 189,
+        "6號餐(雞排+薯條/地瓜條/甜不辣+紅茶/綠茶)": 125,
+        "7號餐（雞排+烈火黑糖珍奶）": 115
       },
       "炸雞": {
-        "脆皮雞排": 85,
-        "脆皮雞腿排": 85,
-        "脆皮雞塊": 70,
-        "脆皮雞柳": 75,
-        "脆皮雞翅": 35,
-        "脆皮雞腿": 50,
-        "泰酥星星魚（鯛魚）": 60,
-        "爆蛋柳葉魚": 60,
-        "酥炸三角骨肉": 65,
-        "脆皮魷魚": 75,
-        "脆皮雞軟骨": 70
+        "脆皮雞排": 85, "脆皮雞腿排": 85, "脆皮雞塊": 70, "脆皮雞柳": 75,
+        "脆皮雞翅": 35, "脆皮雞腿": 50, "泰酥星星魚": 60, "爆蛋柳葉魚": 60,
+        "酥炸三角骨肉": 65, "脆皮魷魚": 75, "脆皮雞軟骨": 70
       },
       "飲料": {
         "錫蘭紅茶冰": 30, "古早味紅茶冰": 30, "綠茶": 30, "仙草甘茶": 35,
-        "派克奶茶": 45, "派克鮮奶茶": 50, "古早味鮮奶茶": 55,
-        "多多綠": 45, "烈火黑糖珍珠奶茶": 55, "烈火黑糖珍珠鮮奶茶": 60,
-        "烈火黑糖珍珠撞奶": 65, "布丁奶茶": 55, "布丁鮮奶茶": 60,
-        "可口可樂": 30, "雪碧": 30, "可口可樂/杯": 35, "雪碧/杯": 35
+        "派克奶茶": 45, "派克鮮奶茶": 50, "古早味鮮奶茶": 55, "多多綠": 45,
+        "烈火黑糖珍奶": 55, "烈火黑糖珍珠鮮奶茶": 60, "烈火黑糖珍珠撞奶": 65,
+        "布丁奶茶": 55, "布丁鮮奶茶": 60, "可口可樂": 30, "雪碧": 30,
+        "可樂/杯": 35, "雪碧/杯": 35
       },
       "點心": {
-        "馬加駱起司條": 50, "波波起司球": 35, "脆皮馬鈴薯條": 35,
-        "玉米布丁酥": 35, "煉乳銀絲捲": 35, "梅子地瓜條": 35,
-        "脆皮甜不辣": 35, "脆皮杏鮑菇": 35, "QQ地瓜球": 35,
-        "洋蔥圈": 35, "香酥四季豆": 35, "脆皮雞皮": 35,
-        "脆皮七里香": 35, "脆皮雞心": 35, "脆皮花枝丸": 30,
-        "酥炸芋頭餅": 30, "薯餅": 25, "手工黑輪片": 25,
-        "脆皮百頁豆腐": 25, "脆皮米腸": 25, "脆皮血糕": 25, "蘿蔔糕": 25
+        "馬加駱起司條": 50, "波波起司球": 35, "脆皮馬鈴薯條": 35, "玉米布丁酥": 35,
+        "煉乳銀絲捲": 35, "梅子地瓜條": 35, "脆皮甜不辣": 35, "脆皮杏鮑菇": 35,
+        "QQ地瓜球": 35, "洋蔥圈": 35, "香酥四季豆": 35, "脆皮雞皮": 35,
+        "脆皮七里香": 35, "脆皮雞心": 35, "脆皮花枝丸": 30, "酥炸芋頭餅": 30,
+        "薯餅": 25, "手工黑輪片": 25, "脆皮百頁豆腐": 25, "脆皮米腸": 25,
+        "脆皮血糕": 25, "蘿蔔糕": 25
       }
     };
 
     const discountMap = {
       '錫蘭紅茶冰': 20, '古早味紅茶冰': 20, '綠茶': 20, '仙草甘茶': 25,
       '派克奶茶': 35, '派克鮮奶茶': 40, '古早味鮮奶茶': 45, '多多綠': 35,
-      '烈火黑糖珍珠奶茶': 45, '烈火黑糖珍珠鮮奶茶': 50, '烈火黑糖珍珠撞奶': 55,
+      '烈火黑糖珍奶': 45, '烈火黑糖珍珠鮮奶茶': 50, '烈火黑糖珍珠撞奶': 55,
       '布丁奶茶': 45, '布丁鮮奶茶': 50, '可口可樂': 25, '雪碧': 25,
-      '可口可樂/杯': 30, '雪碧/杯': 30
+      '可樂/杯': 30, '雪碧/杯': 30
     };
 
     function addRow() {
@@ -230,8 +190,12 @@
       priceCell.textContent = "-";
       const qtyInput = document.createElement('input'); qtyInput.type = 'number'; qtyInput.min = 1; qtyInput.value = 1;
       const noteInput = document.createElement('input'); noteInput.type = 'text'; noteInput.placeholder = '備註';
-      typeSel.onchange = () => { itemSel.innerHTML = `<option disabled selected>請選擇品項</option>` + Object.keys(menu[typeSel.value]).map(i => `<option value="${i}">${i}</option>`).join(''); };
-      itemSel.onchange = () => { priceCell.textContent = menu[typeSel.value][itemSel.value]; };
+      typeSel.onchange = () => {
+        itemSel.innerHTML = `<option disabled selected>請選擇品項</option>` + Object.keys(menu[typeSel.value]).map(i => `<option value="${i}">${i}</option>`).join('');
+      };
+      itemSel.onchange = () => {
+        priceCell.textContent = menu[typeSel.value][itemSel.value];
+      };
       row.appendChild(document.createElement('td')).appendChild(typeSel);
       row.appendChild(document.createElement('td')).appendChild(itemSel);
       row.appendChild(priceCell);
@@ -240,67 +204,58 @@
       document.getElementById('orderTable').appendChild(row);
     }
 
-    function generateSummary() {
-  let total = 0;
-  let hasChicken = false;
-  const rows = document.querySelectorAll('#orderTable tr');
-  let summaryHTML = '<h2>統計結果</h2>';
-  summaryHTML += '<table>';
-  summaryHTML += '<thead><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr></thead>';
-  summaryHTML += '<tbody>';
+        function generateSummary() {
+      let total = 0;
+      let hasChicken = false;
+      const rows = document.querySelectorAll('#orderTable tr');
+      let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
 
-  // 檢查是否含主餐炸雞（影響飲料折扣）
-  rows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    const type = cells[0].querySelector('select')?.value;
-    const item = cells[1].querySelector('select')?.value;
-    const unitPrice = parseInt(cells[2].textContent);
-    if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) hasChicken = true;
-  });
+      // 檢查是否包含主餐雞排雞腿排 → 飲料可折扣
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const type = cells[0].querySelector('select')?.value;
+        const item = cells[1].querySelector('select')?.value;
+        if (type === '炸雞' && ['脆皮雞排', '脆皮雞腿排'].includes(item)) {
+          hasChicken = true;
+        }
+      });
 
-  // 正確組合每一筆 row，五欄同一列
-  rows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    const type = cells[0].querySelector('select')?.value;
-    const item = cells[1].querySelector('select')?.value;
-    let unitPrice = parseInt(cells[2].textContent);
-    const qty = parseInt(cells[3].querySelector('input').value);
-    const note = cells[4].querySelector('input').value;
+      // 建立統計表格
+      rows.forEach(row => {
+        const cells = row.querySelectorAll('td');
+        const type = cells[0].querySelector('select')?.value;
+        const item = cells[1].querySelector('select')?.value;
+        let unitPrice = parseInt(cells[2].textContent);
+        const qty = parseInt(cells[3].querySelector('input')?.value);
+        const note = cells[4].querySelector('input')?.value;
 
-    if (!item || isNaN(unitPrice) || isNaN(qty)) return;
+        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
 
-    if (hasChicken && type === '飲料' && discountMap[item]) {
-      unitPrice = discountMap[item];
+        // 套用飲料折扣
+        if (hasChicken && type === '飲料' && discountMap[item]) {
+          unitPrice = discountMap[item];
+        }
+
+        const subtotal = unitPrice * qty;
+        total += subtotal;
+
+        summaryHTML += `<tr>
+          <td>${item}</td>
+          <td>${unitPrice}</td>
+          <td>${qty}</td>
+          <td>${subtotal}</td>
+          <td>${note}</td>
+        </tr>`;
+      });
+
+      summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
+      document.getElementById('summary').innerHTML = summaryHTML;
+
+      // 顯示列印時間
+      const now = new Date();
+      const timeString = now.toLocaleString("zh-TW", { hour12: false });
+      document.getElementById('printTime').innerText = "列印時間：" + timeString;
     }
-
-    const subtotal = unitPrice * qty;
-    total += subtotal;
-
-    summaryHTML += `<tr>
-  <td>${item}</td>
-  <td>${unitPrice}</td>
-  <td>${qty}</td>
-  <td>${subtotal}</td>
-  <td>${note}</td>
-</tr>`;
-  });
-
-  summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total.toLocaleString()}</td></tr>`;
-  summaryHTML += '</tbody></table>';
-
-  // debug log（你可以保留或移除）
-  console.log("===== summaryHTML 輸出開始 =====");
-  console.log(summaryHTML);
-  console.log("===== summaryHTML 輸出結束 =====");
-
-  document.getElementById('summary').innerHTML = summaryHTML;
-
-  const now = new Date();
-  const timeString = now.toLocaleString("zh-TW", { hour12: false });
-  document.getElementById('printTime').innerText = "列印時間：" + timeString;
-}
-
-
 
     function clearAll() {
       document.getElementById('orderTable').innerHTML = '';
@@ -308,6 +263,7 @@
       document.getElementById('printTime').innerText = '';
     }
 
+    // 預設新增一列
     window.onload = addRow;
   </script>
 </body>
