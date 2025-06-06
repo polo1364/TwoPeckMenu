@@ -249,7 +249,7 @@
   summaryHTML += '<thead><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr></thead>';
   summaryHTML += '<tbody>';
 
-  // 先偵測是否有主餐（影響飲料折扣）
+  // 偵測是否有主餐（影響飲料折扣）
   rows.forEach(row => {
     const cells = row.querySelectorAll('td');
     const type = cells[0].querySelector('select')?.value;
@@ -260,7 +260,7 @@
     }
   });
 
-  // 填入每一列資料
+  // 組合每列內容
   rows.forEach(row => {
     const cells = row.querySelectorAll('td');
     const type = cells[0].querySelector('select')?.value;
@@ -278,7 +278,6 @@
     const subtotal = unitPrice * qty;
     total += subtotal;
 
-    // 🔧 確保每一筆是一列五格，避免誤換行
     summaryHTML += `<tr>
       <td>${item}</td>
       <td>${unitPrice}</td>
@@ -290,13 +289,19 @@
 
   summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total.toLocaleString()}</td></tr>`;
   summaryHTML += '</tbody></table>';
+
+  // 👇👇👇 輸出產生的 HTML 結構到 console
+  console.log("===== summaryHTML 輸出開始 =====");
+  console.log(summaryHTML);
+  console.log("===== summaryHTML 輸出結束 =====");
+
   document.getElementById('summary').innerHTML = summaryHTML;
 
-  // 顯示列印時間
   const now = new Date();
   const timeString = now.toLocaleString("zh-TW", { hour12: false });
   document.getElementById('printTime').innerText = "列印時間：" + timeString;
 }
+
 
     function clearAll() {
       document.getElementById('orderTable').innerHTML = '';
