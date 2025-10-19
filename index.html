@@ -2,154 +2,404 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
   <title>派克炸雞點餐系統</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-red: #b30000;
+      --hover-red: #d40000;
+      --bg-cream: #fffbe6;
+      --card-white: #ffffff;
+      --border-gray: #ccc;
+      --text-dark: #333;
+      --text-muted: #666;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
     body {
       font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif;
-      padding: 20px;
-      background: #fffbe6;
-      color: #333;
-      max-width: 960px;
-      margin: auto;
+      background: var(--bg-cream);
+      color: var(--text-dark);
+      min-height: 100vh;
+      padding: 1rem;
     }
-    h1, h2 {
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    h1 {
       text-align: center;
-      color: #b30000;
-      margin: 20px 0;
+      color: var(--primary-red);
+      font-size: 1.75rem;
+      margin: 1rem 0 1.5rem;
+      font-weight: 700;
     }
+
+    h2 {
+      text-align: center;
+      color: var(--primary-red);
+      font-size: 1.5rem;
+      margin: 1.5rem 0 1rem;
+      font-weight: 600;
+    }
+
+    /* Table Styles */
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 1rem 0;
+      background: var(--card-white);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 20px 0;
-      background: #fff;
+      min-width: 600px;
     }
+
     th {
-      background-color: #f0f0f0;
-      color: #333;
+      background-color: var(--primary-red);
+      color: white;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
+
     th, td {
-      border: 1px solid #ccc;
-      padding: 8px;
+      border: 1px solid var(--border-gray);
+      padding: 0.75rem 0.5rem;
       text-align: center;
+      font-size: 0.9375rem;
     }
+
+    td {
+      background: white;
+    }
+
+    /* Form Controls */
     select, input[type="number"], input[type="text"] {
       width: 100%;
-      padding: 6px;
-      box-sizing: border-box;
-      font-size: 14px;
-    }
-    .buttons {
-      text-align: center;
-      margin: 20px 0;
-    }
-    button {
-      margin: 6px;
-      padding: 10px 20px;
-      font-size: 16px;
-      border: none;
-      background: #b30000;
-      color: white;
+      padding: 0.5rem;
+      border: 1px solid var(--border-gray);
       border-radius: 6px;
+      font-size: 0.9375rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      border-color: var(--primary-red);
+    }
+
+    input[type="number"] {
+      text-align: center;
+    }
+
+    /* Buttons */
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      justify-content: center;
+      margin: 1.5rem 0;
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 500;
+      border: none;
+      background: var(--primary-red);
+      color: white;
+      border-radius: 8px;
       cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 2px 4px rgba(179, 0, 0, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
     }
+
     button:hover {
-      background: #d40000;
+      background: var(--hover-red);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(179, 0, 0, 0.3);
     }
-    .only-print {
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    /* Summary Section */
+    #summary {
+      margin: 2rem 0;
+    }
+
+    #summary .table-wrapper {
+      background: #fff9e6;
+    }
+
+    #summary th {
+      background-color: #f0f0f0;
+      color: var(--text-dark);
+    }
+
+    #summary .total-row {
+      background: var(--primary-red) !important;
+      color: white;
+      font-weight: 700;
+      font-size: 1.125rem;
+    }
+
+    /* Footer Info */
+    .footer-info {
       display: none;
       text-align: center;
-      font-size: 18px;
-      margin-top: 30px;
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
     }
-@media print {
-  @page {
-    size: A4 portrait;
-    margin: 12mm;
-  }
 
-  body {
-    margin: 0;
-    padding: 0;
-    -webkit-print-color-adjust: exact;
-    font-family: "Microsoft JhengHei", sans-serif;
-  }
+    .footer-info p {
+      margin: 0.5rem 0;
+      font-size: 1rem;
+      color: var(--text-dark);
+    }
 
-  .no-print,
-  .no-print * {
-    display: none !important;
-  }
+    .footer-info p:first-child {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-red);
+    }
 
-  #summary, #footer {
-    display: block !important;
-    visibility: visible !important;
-  }
+    #printTime {
+      display: none;
+      text-align: center;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-top: 1rem;
+    }
 
-  #summary table {
-    width: 100%;
-    border-collapse: collapse;
-    table-layout: fixed;
-  }
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        padding: 0.5rem;
+      }
 
-  #summary th, #summary td {
-    border: 1px solid #000;
-    padding: 6px 8px;
-    font-size: 14px;
-    text-align: center;
-    word-break: break-word;
-  }
+      h1 {
+        font-size: 1.5rem;
+        margin: 0.75rem 0 1rem;
+      }
 
-  #summary th {
-    background: #f2f2f2;
-  }
+      h2 {
+        font-size: 1.25rem;
+      }
 
-  #footer {
-    text-align: center;
-    font-size: 16px;
-    margin-top: 30px;
-    font-family: "Microsoft JhengHei", sans-serif;
-  }
+      table {
+        min-width: 500px;
+        font-size: 0.875rem;
+      }
 
-  #footer p {
-    margin: 4px 0;
-  }
+      th, td {
+        padding: 0.5rem 0.25rem;
+      }
 
-  #printTime {
-    text-align: center;
-    font-size: 12px;
-    margin-top: 10px;
-    display: block !important;
-  }
-}
+      select, input[type="number"], input[type="text"] {
+        padding: 0.4rem;
+        font-size: 0.875rem;
+      }
 
+      .buttons {
+        gap: 0.5rem;
+      }
+
+      button {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9375rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.25rem;
+      }
+
+      table {
+        min-width: 450px;
+        font-size: 0.8125rem;
+      }
+
+      th, td {
+        padding: 0.4rem 0.2rem;
+      }
+
+      button {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    /* Print Styles */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 12mm;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        background: white;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .container {
+        max-width: 100%;
+      }
+
+      .no-print,
+      .no-print * {
+        display: none !important;
+      }
+
+      #summary,
+      .footer-info,
+      #printTime {
+        display: block !important;
+        visibility: visible !important;
+      }
+
+      .table-wrapper {
+        box-shadow: none;
+        overflow: visible;
+      }
+
+      table {
+        min-width: 100%;
+        page-break-inside: auto;
+      }
+
+      tr {
+        page-break-inside: avoid;
+        page-break-after: auto;
+      }
+
+      thead {
+        display: table-header-group;
+      }
+
+      #summary th, #summary td {
+        border: 1px solid #000;
+        padding: 6px 8px;
+        font-size: 14px;
+      }
+
+      #summary th {
+        background: #f2f2f2 !important;
+        -webkit-print-color-adjust: exact;
+      }
+
+      #summary .total-row {
+        background: #e0e0e0 !important;
+        color: #000 !important;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .footer-info {
+        margin-top: 30px;
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+
+      h1, h2 {
+        page-break-after: avoid;
+      }
+    }
+
+    /* Loading State */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: var(--text-muted);
+    }
+
+    .empty-state p {
+      font-size: 1.125rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Accessibility */
+    button:focus-visible,
+    select:focus-visible,
+    input:focus-visible {
+      outline: 2px solid var(--primary-red);
+      outline-offset: 2px;
+    }
   </style>
 </head>
 
-  <body>
-  <h1>派克炸雞點餐系統</h1>
-  <div class="no-print">
-    <table>
-      <thead>
-        <tr><th>分類</th><th>品項</th><th>價格</th><th>數量</th><th>備註</th></tr>
-      </thead>
-      <tbody id="orderTable"></tbody>
-    </table>
-    <div class="buttons">
-      <button onclick="addRow()">➕ 新增品項</button>
-      <button onclick="generateSummary()">📊 統計總金額</button>
-      <button onclick="print()">🖨️ 列印</button>
-      <button onclick="clearAll()">🗑️ 清除</button>
-    </div>
-  </div>
+<body>
+  <div class="container">
+    <h1>🍗 派克炸雞點餐系統</h1>
+    
+    <div class="no-print">
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>分類</th>
+              <th>品項</th>
+              <th>價格</th>
+              <th>數量</th>
+              <th>備註</th>
+            </tr>
+          </thead>
+          <tbody id="orderTable"></tbody>
+        </table>
+      </div>
 
-  <div id="summary"></div>
-  <div id="footer" class="only-print">
-    <p>大瑞科技</p>
-    <p>高雄市大寮區鳳林二路532號</p>
-    <p>(07)7871875</p>
+      <div class="buttons">
+        <button onclick="addRow()" aria-label="新增品項">➕ 新增品項</button>
+        <button onclick="generateSummary()" aria-label="統計總金額">📊 統計總金額</button>
+        <button onclick="window.print()" aria-label="列印">🖨️ 列印</button>
+        <button onclick="clearAll()" aria-label="清除全部">🗑️ 清除</button>
+      </div>
+    </div>
+
+    <div id="summary"></div>
+
+    <div class="footer-info">
+      <p>大瑞科技</p>
+      <p>高雄市大寮區鳳林二路532號</p>
+      <p>☎️ (07)7871875</p>
+    </div>
+
+    <div id="printTime"></div>
   </div>
-  <div id="printTime" class="only-print"></div>
 
   <script>
     const menu = {
@@ -193,36 +443,91 @@
     };
 
     function addRow() {
+      const tbody = document.getElementById('orderTable');
       const row = document.createElement('tr');
+
+      // 分類選擇
+      const typeCell = document.createElement('td');
       const typeSel = document.createElement('select');
-      typeSel.innerHTML = `<option disabled selected>請選分類</option>` + Object.keys(menu).map(c => `<option value="${c}">${c}</option>`).join('');
+      typeSel.innerHTML = `<option value="" disabled selected>請選分類</option>` + 
+        Object.keys(menu).map(c => `<option value="${c}">${c}</option>`).join('');
+      typeSel.setAttribute('aria-label', '選擇分類');
+      typeCell.appendChild(typeSel);
+
+      // 品項選擇
+      const itemCell = document.createElement('td');
       const itemSel = document.createElement('select');
-      itemSel.innerHTML = `<option disabled selected>請先選分類</option>`;
+      itemSel.innerHTML = `<option value="" disabled selected>請先選分類</option>`;
+      itemSel.setAttribute('aria-label', '選擇品項');
+      itemCell.appendChild(itemSel);
+
+      // 價格顯示
       const priceCell = document.createElement('td');
       priceCell.textContent = "-";
-      const qtyInput = document.createElement('input'); qtyInput.type = 'number'; qtyInput.min = 1; qtyInput.value = 1;
-      const noteInput = document.createElement('input'); noteInput.type = 'text'; noteInput.placeholder = '備註';
+
+      // 數量輸入
+      const qtyCell = document.createElement('td');
+      const qtyInput = document.createElement('input');
+      qtyInput.type = 'number';
+      qtyInput.min = 1;
+      qtyInput.value = 1;
+      qtyInput.setAttribute('aria-label', '數量');
+      qtyCell.appendChild(qtyInput);
+
+      // 備註輸入
+      const noteCell = document.createElement('td');
+      const noteInput = document.createElement('input');
+      noteInput.type = 'text';
+      noteInput.placeholder = '備註';
+      noteInput.setAttribute('aria-label', '備註');
+      noteCell.appendChild(noteInput);
+
+      // 事件監聽
       typeSel.onchange = () => {
-        itemSel.innerHTML = `<option disabled selected>請選擇品項</option>` + Object.keys(menu[typeSel.value]).map(i => `<option value="${i}">${i}</option>`).join('');
+        const category = typeSel.value;
+        if (category) {
+          itemSel.innerHTML = `<option value="" disabled selected>請選擇品項</option>` + 
+            Object.keys(menu[category]).map(i => `<option value="${i}">${i}</option>`).join('');
+          priceCell.textContent = "-";
+        }
       };
+
       itemSel.onchange = () => {
-        priceCell.textContent = menu[typeSel.value][itemSel.value];
+        const category = typeSel.value;
+        const item = itemSel.value;
+        if (category && item) {
+          priceCell.textContent = menu[category][item];
+        }
       };
-      row.appendChild(document.createElement('td')).appendChild(typeSel);
-      row.appendChild(document.createElement('td')).appendChild(itemSel);
+
+      // 組裝行
+      row.appendChild(typeCell);
+      row.appendChild(itemCell);
       row.appendChild(priceCell);
-      row.appendChild(document.createElement('td')).appendChild(qtyInput);
-      row.appendChild(document.createElement('td')).appendChild(noteInput);
-      document.getElementById('orderTable').appendChild(row);
+      row.appendChild(qtyCell);
+      row.appendChild(noteCell);
+
+      tbody.appendChild(row);
+
+      // 滾動到新增的行
+      setTimeout(() => {
+        row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 100);
     }
 
-        function generateSummary() {
+    function generateSummary() {
       let total = 0;
       let hasChicken = false;
       const rows = document.querySelectorAll('#orderTable tr');
-      let summaryHTML = '<h2>統計結果</h2><table><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr>';
+      
+      if (rows.length === 0) {
+        alert('請先新增品項！');
+        return;
+      }
 
-      // 檢查是否包含主餐雞排雞腿排 → 飲料可折扣
+      let summaryHTML = '<h2>📋 統計結果</h2><div class="table-wrapper"><table><thead><tr><th>品項</th><th>單價</th><th>數量</th><th>小計</th><th>備註</th></tr></thead><tbody>';
+
+      // 檢查是否有雞排或雞腿排（飲料可折扣）
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
         const type = cells[0].querySelector('select')?.value;
@@ -232,6 +537,8 @@
         }
       });
 
+      let itemCount = 0;
+
       // 建立統計表格
       rows.forEach(row => {
         const cells = row.querySelectorAll('td');
@@ -239,44 +546,91 @@
         const item = cells[1].querySelector('select')?.value;
         let unitPrice = parseInt(cells[2].textContent);
         const qty = parseInt(cells[3].querySelector('input')?.value);
-        const note = cells[4].querySelector('input')?.value;
+        const note = cells[4].querySelector('input')?.value || '';
 
-        if (!item || isNaN(unitPrice) || isNaN(qty)) return;
+        if (!item || isNaN(unitPrice) || isNaN(qty) || qty < 1) return;
 
         // 套用飲料折扣
+        let discountNote = '';
         if (hasChicken && type === '飲料' && discountMap[item]) {
+          const originalPrice = unitPrice;
           unitPrice = discountMap[item];
+          discountNote = ` (折扣價)`;
         }
 
         const subtotal = unitPrice * qty;
         total += subtotal;
+        itemCount++;
 
         summaryHTML += `<tr>
-          <td>${item}</td>
-          <td>${unitPrice}</td>
+          <td>${item}${discountNote}</td>
+          <td>$${unitPrice}</td>
           <td>${qty}</td>
-          <td>${subtotal}</td>
+          <td>$${subtotal}</td>
           <td>${note}</td>
         </tr>`;
       });
 
-      summaryHTML += `<tr><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></table>`;
+      if (itemCount === 0) {
+        alert('請完整填寫品項資訊！');
+        return;
+      }
+
+      summaryHTML += `</tbody><tfoot><tr class="total-row"><td colspan="3">總金額</td><td colspan="2">$${total}</td></tr></tfoot></table></div>`;
+      
       document.getElementById('summary').innerHTML = summaryHTML;
 
       // 顯示列印時間
       const now = new Date();
-      const timeString = now.toLocaleString("zh-TW", { hour12: false });
+      const timeString = now.toLocaleString("zh-TW", { 
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false 
+      });
       document.getElementById('printTime').innerText = "列印時間：" + timeString;
+
+      // 滾動到統計結果
+      setTimeout(() => {
+        document.getElementById('summary').scrollIntoView({ behavior: 'smooth' });
+      }, 100);
     }
 
     function clearAll() {
-      document.getElementById('orderTable').innerHTML = '';
-      document.getElementById('summary').innerHTML = '';
-      document.getElementById('printTime').innerText = '';
+      if (confirm('確定要清除所有資料嗎？')) {
+        document.getElementById('orderTable').innerHTML = '';
+        document.getElementById('summary').innerHTML = '';
+        document.getElementById('printTime').innerText = '';
+        addRow(); // 自動新增一列
+      }
     }
 
-    // 預設新增一列
-    window.onload = addRow;
+    // 鍵盤快捷鍵
+    document.addEventListener('keydown', (e) => {
+      // Ctrl/Cmd + Enter: 統計
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        generateSummary();
+      }
+      // Ctrl/Cmd + N: 新增
+      if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+        e.preventDefault();
+        addRow();
+      }
+      // Ctrl/Cmd + P: 列印
+      if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+        // 瀏覽器預設行為會處理列印
+      }
+    });
+
+    // 初始化：預設新增一列
+    window.onload = () => {
+      addRow();
+    };
   </script>
 </body>
 </html>
+
